@@ -64,6 +64,26 @@ void Application::PreUpdate()
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 void Application::Update()
 {
+	// カメラ行列の更新
+	{
+		// 大きさ
+		Math::Matrix _mScale =
+			Math::Matrix::CreateScale(1);
+
+		// 基準点（ターゲット）からどれだけ離れているか
+		Math::Matrix _mTrans = 
+			Math::Matrix::CreateTranslation(0, 6, 0);
+
+		// どれだけ傾けているか
+		Math::Matrix _mRotation =
+			Math::Matrix::CreateRotationX(
+			DirectX::XMConvertToRadians(45));
+
+		// カメラのワールド行列を作成、適応させる
+		//Math::Matrix _mWorld = _mScale * _mRotation * _mTrans;
+		Math::Matrix _mWorld = _mScale * _mRotation * _mTrans;
+		m_spCamera->SetCameraMatrix(_mWorld);
+	}
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -100,6 +120,7 @@ void Application::KdPostDraw()
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 void Application::PreDraw()
 {
+	m_spCamera->SetToShader();
 }
 
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -119,6 +140,19 @@ void Application::Draw()
 	// 陰影のあるオブジェクト(不透明な物体や2Dキャラ)はBeginとEndの間にまとめてDrawする
 	KdShaderManager::Instance().m_StandardShader.BeginLit();
 	{
+		Math::Matrix _mat = 
+			//Math::Matrix::Identity;	// わかりづらいためあまり使わない
+			//_mat._43 = 5;				// わかりづらいためあまり使わない
+			Math::Matrix::
+			CreateTranslation(0, 0, 5);
+			//CreateTranslation(0,0,_zPos);
+		KdShaderManager::Instance().m_StandardShader
+			.DrawPolygon(*m_spPoly, _mat);
+
+		//_zPos += 0.01f;	//奥へ移動する
+
+		KdShaderManager::Instance().m_StandardShader
+			.DrawModel(*m_spModel);
 	}
 	KdShaderManager::Instance().m_StandardShader.EndLit();
 
@@ -220,6 +254,26 @@ bool Application::Init(int w, int h)
 	// オーディオ初期化
 	//===================================================================
 	KdAudioManager::Instance().Init();
+
+	//===================================================================
+	// カメラ初期化
+	//===================================================================
+	m_spCamera = std::make_shared<KdCamera>();
+
+	//===================================================================
+	// ポリゴン初期化
+	//===================================================================
+	m_spPoly = std::make_shared<KdSquarePolygon>();
+	m_spPoly->
+		SetMaterial("Asset/Data/LessonData/Character/Hamu.png");
+	m_spPoly->
+		SetPivot(KdSquarePolygon::PivotType::Center_Bottom);
+
+	//===================================================================
+	// 地形初期化
+	//===================================================================
+	m_spModel = std::make_shared<KdModelData>();
+	m_spModel->Load("Asset/Data/LessonData/Terrain/Terrain.gltf");
 
 	return true;
 }
