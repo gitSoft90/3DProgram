@@ -70,19 +70,45 @@ void Application::Update()
 		Math::Matrix _mScale =
 			Math::Matrix::CreateScale(1);
 
+		// どれだけ傾けているか
+		Math::Matrix _mRotationX =
+			Math::Matrix::CreateRotationX(
+				DirectX::XMConvertToRadians(45));
+		
+		static float _yAng = 0;
+		Math::Matrix _mRotationY =
+			Math::Matrix::CreateRotationY(
+				DirectX::XMConvertToRadians(_yAng));
+		//_yAng += 0.5f;
+
 		// 基準点（ターゲット）からどれだけ離れているか
 		Math::Matrix _mTrans = 
-			Math::Matrix::CreateTranslation(0, 6, 0);
-
-		// どれだけ傾けているか
-		Math::Matrix _mRotation =
-			Math::Matrix::CreateRotationX(
-			DirectX::XMConvertToRadians(45));
+			Math::Matrix::CreateTranslation(0, 6, -5);
 
 		// カメラのワールド行列を作成、適応させる
-		//Math::Matrix _mWorld = _mScale * _mRotation * _mTrans;
-		Math::Matrix _mWorld = _mScale * _mRotation * _mTrans;
+		Math::Matrix _mWorld = _mScale * _mRotationX * _mTrans * _mRotationY;
 		m_spCamera->SetCameraMatrix(_mWorld);
+	}
+
+	// ハム太郎の更新
+	{
+		// キャラクターの移動速度（マネしちゃダメですよ）
+		float			moveSpd = 0.05f;
+		Math::Vector3	nowPos = m_mHamuWorld.Translation();
+
+		Math::Vector3	moveVec = Math::Vector3::Zero;
+		if (GetAsyncKeyState('W'))moveVec.z =  1.0f;
+		if (GetAsyncKeyState('A'))moveVec.x = -1.0f;
+		if (GetAsyncKeyState('S'))moveVec.z = -1.0f;
+		if (GetAsyncKeyState('D'))moveVec.x =  1.0f;
+
+		moveVec *= moveSpd;
+		nowPos += moveVec;
+		/*nowPos.x += moveVec.x;
+		nowPos.z += moveVec.z;*/
+
+		// キャラクターのワールド行列を作成
+		m_mHamuWorld = Math::Matrix::CreateTranslation(nowPos);
 	}
 }
 
@@ -140,14 +166,12 @@ void Application::Draw()
 	// 陰影のあるオブジェクト(不透明な物体や2Dキャラ)はBeginとEndの間にまとめてDrawする
 	KdShaderManager::Instance().m_StandardShader.BeginLit();
 	{
-		Math::Matrix _mat = 
-			//Math::Matrix::Identity;	// わかりづらいためあまり使わない
 			//_mat._43 = 5;				// わかりづらいためあまり使わない
-			Math::Matrix::
-			CreateTranslation(0, 0, 5);
+			//Math::Matrix::
+			//CreateTranslation(0, 0, 5);
 			//CreateTranslation(0,0,_zPos);
 		KdShaderManager::Instance().m_StandardShader
-			.DrawPolygon(*m_spPoly, _mat);
+			.DrawPolygon(*m_spPoly, m_mHamuWorld);
 
 		//_zPos += 0.01f;	//奥へ移動する
 
