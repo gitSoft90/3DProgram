@@ -85,8 +85,8 @@ void Application::Update()
 		Math::Matrix _mTrans = 
 			Math::Matrix::CreateTranslation(0, 6, -5);
 
-		// カメラのワールド行列を作成、適応させる
-		Math::Matrix _mWorld = _mScale * _mRotationX * _mTrans * _mRotationY;
+		// カメラのワールド行列を作成、適応させる(行列の親子関係)
+		Math::Matrix _mWorld = _mScale * _mRotationX * _mTrans * _mRotationY * m_mHamuWorld;
 		m_spCamera->SetCameraMatrix(_mWorld);
 	}
 
@@ -96,12 +96,13 @@ void Application::Update()
 		float			moveSpd = 0.05f;
 		Math::Vector3	nowPos = m_mHamuWorld.Translation();
 
+		// ベクトル(方向ベクトル) = 必ず「長さ(力)」が1でなければならない
 		Math::Vector3	moveVec = Math::Vector3::Zero;
 		if (GetAsyncKeyState('W'))moveVec.z =  1.0f;
 		if (GetAsyncKeyState('A'))moveVec.x = -1.0f;
 		if (GetAsyncKeyState('S'))moveVec.z = -1.0f;
 		if (GetAsyncKeyState('D'))moveVec.x =  1.0f;
-
+		moveVec.Normalize();
 		moveVec *= moveSpd;
 		nowPos += moveVec;
 		/*nowPos.x += moveVec.x;
