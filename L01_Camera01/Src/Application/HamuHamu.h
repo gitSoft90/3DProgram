@@ -11,8 +11,5 @@ public:
 	void DrawLit()	override;
 
 private:
-	std::shared_ptr<KdSquarePolygon>
-		m_spPoly = nullptr;
-
-	void Release();
+	std::shared_ptr<KdSquarePolygon> m_spPoly = nullptr;
 };
