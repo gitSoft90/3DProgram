@@ -1,5 +1,9 @@
 ﻿#include "main.h"
 
+#include "Earth.h"
+#include "Moon.h"
+#include "Sun.h"
+
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 // エントリーポイント
 // アプリケーションはこの関数から進行する
@@ -64,8 +68,27 @@ void Application::PreUpdate()
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 void Application::Update()
 {
-}
+	//カメラ用の行列
+	// 拡縮（大きさ）
+	Math::Matrix cameraScaleMat;
+	cameraScaleMat = Math::Matrix::CreateScale(1);
 
+	// 基準点
+	Math::Matrix cameraTransMat;
+	cameraTransMat = Math::Matrix::CreateTranslation(0, 0, -15);
+	
+	// カメラのワールド行列
+	Math::Matrix _mWorld;
+	_mWorld = cameraScaleMat * cameraTransMat;
+
+	m_spCamera->SetCameraMatrix(_mWorld);
+
+	// 全オブジェクトの更新
+	for (std::shared_ptr<KdGameObject> gameObj : m_GameObjList)
+	{
+		gameObj->Update();
+	}
+}
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
 // アプリケーション更新の後処理
 // ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// ///// /////
@@ -120,6 +143,11 @@ void Application::Draw()
 	// 陰影のあるオブジェクト(不透明な物体や2Dキャラ)はBeginとEndの間にまとめてDrawする
 	KdShaderManager::Instance().m_StandardShader.BeginLit();
 	{
+		// 全ゲームオブジェクトの描画
+		for (std::shared_ptr<KdGameObject> gameObj : m_GameObjList)
+		{
+			gameObj->DrawLit();
+		}
 	}
 	KdShaderManager::Instance().m_StandardShader.EndLit();
 
@@ -226,6 +254,30 @@ bool Application::Init(int w, int h)
 	// カメラ初期化
 	//===================================================================
 	m_spCamera	= std::make_shared<KdCamera>();
+
+	//===================================================================
+	// 地球初期化
+	//===================================================================
+	std::shared_ptr<Earth> _earth = std::make_shared<Earth>();
+	_earth->Init();
+
+	m_GameObjList.push_back(_earth);
+
+	//===================================================================
+	// 月初期化
+	//===================================================================
+	std::shared_ptr<Moon> _moon = std::make_shared<Moon>();
+	_moon->Init();
+
+	m_GameObjList.push_back(_moon);
+
+	//===================================================================
+	// 太陽初期化
+	//===================================================================
+	std::shared_ptr<Sun> _sun = std::make_shared<Sun>();
+	_sun->Init();
+
+	m_GameObjList.push_back(_sun);
 
 	return true;
 }
