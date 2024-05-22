@@ -19,7 +19,7 @@ void Sun::Update()
 	// 太陽の行列
 	// 拡縮（大きさ）
 	Math::Matrix sunScaleMat;
-	sunScaleMat = Math::Matrix::CreateScale(2);
+	sunScaleMat = Math::Matrix::CreateScale(1.5f);
 
 	//// 回転（自転用）
 	//Math::Matrix sunRotMatX;
@@ -33,14 +33,14 @@ void Sun::Update()
 
 
 
-	/*Math::Matrix sunRotMatSpinY;
+	Math::Matrix sunRotMatSpinY;
 	float _sYDeg = 0;
 	_sYDeg += 2.0f;
 	if (_sYDeg > 360)
 	{
 		_sYDeg = 0;
 	}
-	sunRotMatSpinY = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_sYDeg));*/
+	sunRotMatSpinY = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(_sYDeg));
 
 	/*Math::Matrix earthRotMatZ;
 	float _zDeg = 0;
@@ -69,7 +69,8 @@ void Sun::Update()
 
 	// 合成行列
 	//m_mat = sunScaleMat * sunRotMatX * sunTransMat;
-	m_mat = sunScaleMat * sunTransMat;
+	m_mat = sunScaleMat * sunRotMatSpinY * sunTransMat;
+	//m_mat = sunScaleMat * sunTransMat;
 }
 
 void Sun::DrawLit()

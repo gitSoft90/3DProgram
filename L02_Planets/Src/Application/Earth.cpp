@@ -61,7 +61,6 @@ void Earth::Update()
 
 	// 移動
 	Math::Matrix earthTransMat;
-	Math::Vector3 _pos = { 0,0,0 };
 
 	earthTransMat = Math::Matrix::CreateTranslation(0, 0, -8);
 
