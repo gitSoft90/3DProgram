@@ -84,7 +84,7 @@ void Application::Update()
 	m_spCamera->SetCameraMatrix(_mWorld);
 
 	// 全オブジェクトの更新
-	for (std::shared_ptr<KdGameObject> gameObj : m_GameObjList)
+	for (std::shared_ptr<KdGameObject> gameObj : m_gameObjList)
 	{
 		gameObj->Update();
 	}
@@ -144,7 +144,7 @@ void Application::Draw()
 	KdShaderManager::Instance().m_StandardShader.BeginLit();
 	{
 		// 全ゲームオブジェクトの描画
-		for (std::shared_ptr<KdGameObject> gameObj : m_GameObjList)
+		for (std::shared_ptr<KdGameObject> gameObj : m_gameObjList)
 		{
 			gameObj->DrawLit();
 		}
@@ -261,7 +261,7 @@ bool Application::Init(int w, int h)
 	std::shared_ptr<Earth> _earth = std::make_shared<Earth>();
 	_earth->Init();
 
-	m_GameObjList.push_back(_earth);
+	m_gameObjList.push_back(_earth);
 
 	//===================================================================
 	// 月初期化
@@ -269,7 +269,7 @@ bool Application::Init(int w, int h)
 	std::shared_ptr<Moon> _moon = std::make_shared<Moon>();
 	_moon->Init();
 
-	m_GameObjList.push_back(_moon);
+	m_gameObjList.push_back(_moon);
 
 	//===================================================================
 	// 太陽初期化
@@ -277,7 +277,7 @@ bool Application::Init(int w, int h)
 	std::shared_ptr<Sun> _sun = std::make_shared<Sun>();
 	_sun->Init();
 
-	m_GameObjList.push_back(_sun);
+	m_gameObjList.push_back(_sun);
 
 	return true;
 }

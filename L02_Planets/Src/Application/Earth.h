@@ -12,6 +12,4 @@ public:
 
 private:
 	std::shared_ptr<KdModelData> m_spModel = nullptr;
-
-	Math::Matrix m_mat;
 };

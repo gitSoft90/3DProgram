@@ -14,6 +14,8 @@ void Moon::Init()
 {
 	m_spModel = std::make_shared<KdModelData>();
 	m_spModel->Load("Asset/Data/LessonData/Planets/moon.gltf");
+	
+	m_earth = std::make_shared<Earth>();
 }
 
 void Moon::Update()
@@ -64,19 +66,19 @@ void Moon::Update()
 	// 移動
 	Math::Matrix moonTransMat;	
 	//Earth* earth;
-	Earth earth;
+	//Earth earth;
 
 	//moonTransMat = Math::Matrix::CreateTranslation(earth->GetPos().x + 5, earth->GetPos().y, earth->GetPos().z);
-	moonTransMat = Math::Matrix::CreateTranslation(earth.GetPos().x + 5, earth.GetPos().y, earth.GetPos().z);
+	moonTransMat = Math::Matrix::CreateTranslation(m_earth->GetPos().x + 5, m_earth->GetPos().y, m_earth->GetPos().z);
 
 	// 合成行列
 	//m_mat = moonScaleMat * moonRotMatRevoY * moonTransMat;
-	m_mat = moonScaleMat * moonTransMat * moonRotMatRevoY;
+	m_mWorld = moonScaleMat * moonTransMat * moonRotMatRevoY;
 	//m_mat = moonScaleMat * moonRotMatZ * moonTransMat * moonRotMatRevoY;
 	//m_mat = moonScaleMat * moonRotMatSpinY * moonTransMat * moonRotMatRevoY;
 }
 
 void Moon::DrawLit()
 {
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mat);
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
 }

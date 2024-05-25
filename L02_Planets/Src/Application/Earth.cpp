@@ -67,10 +67,10 @@ void Earth::Update()
 	// 合成行列
 	//m_mat = earthScaleMat * earthTransMat * earthRotMatRevoY;
 	//m_mat = earthScaleMat * earthRotMatZ * earthTransMat * earthRotMatRevoY;
-	m_mat = earthScaleMat * earthRotMatSpinY * earthTransMat * earthRotMatRevoY;
+	m_mWorld = earthScaleMat * earthRotMatSpinY * earthTransMat * earthRotMatRevoY;
 }
 
 void Earth::DrawLit()
 {
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mat);
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
 }

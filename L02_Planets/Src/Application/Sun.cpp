@@ -69,11 +69,11 @@ void Sun::Update()
 
 	// 合成行列
 	//m_mat = sunScaleMat * sunRotMatX * sunTransMat;
-	m_mat = sunScaleMat * sunRotMatSpinY * sunTransMat;
+	m_mWorld = sunScaleMat * sunRotMatSpinY * sunTransMat;
 	//m_mat = sunScaleMat * sunTransMat;
 }
 
 void Sun::DrawLit()
 {
-	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mat);
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
 }
