@@ -29,7 +29,8 @@ void Earth::Update()
 	const std::shared_ptr<PlanetBase> spPalent = m_wpParent.lock();
 	if (spPalent)
 	{
-		parentTrans = Math::Matrix::CreateTranslation(spPalent->GetPos());
+		parentTrans = spPalent->GetMatrix();
+		//parentTrans = Math::Matrix::CreateTranslation(spPalent->GetPos());
 	}
 
 	// 自転
