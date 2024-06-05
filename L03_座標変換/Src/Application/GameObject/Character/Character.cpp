@@ -8,6 +8,12 @@ void Character::Init()
 		m_spPoly->SetMaterial("Asset/Data/LessonData/Character/Hamu.png");
 		m_spPoly->SetPivot(KdSquarePolygon::PivotType::Center_Bottom);
 	}
+
+	if (!m_Tex)
+	{
+		m_Tex = std::make_shared<KdTexture>();
+		m_Tex->Load("Asset/Textures/target.png");
+	}
 }
 
 void Character::Update()
@@ -24,6 +30,14 @@ void Character::Update()
 	moveVec.Normalize();
 	moveVec *= moveSpd;
 	nowPos += moveVec;
+	nowPos.y -= 0.01f;
+
+
+	// マウス座標の取得
+	GetCursorPos(&m_mousePos);
+
+	ScreenToClient(APP.Instance().m_window.GetWndHandle(), &m_mousePos)
+
 
 	// キャラクターのワールド行列を創る処理
 	m_mWorld = Math::Matrix::CreateTranslation(nowPos);
@@ -38,7 +52,24 @@ void Character::DrawLit()
 
 void Character::DrawSprite()
 {
-	Math::Vector3 pos = GetMatrix().Translation();
-	KdShaderManager::Instance().
-		m_spriteShader.DrawCircle(pos.x, pos.z, 10, &kRedColor);
+	std::shared_ptr<KdCamera> _camera = m_wpCamera.lock();
+	if (_camera)
+	{
+		Math::Vector3 pos		 = GetPos();
+		Math::Vector3 result	 = Math::Vector3::Zero;
+		_camera->
+			ConvertWorldToScreenDetail(pos,result);
+
+
+		Math::Vector3 rayDir = result - Math::Vector3::Zero;
+		float rayRange = 0.0f;
+		_camera->GenerateRayInfoFromClientPos(m_mousePos, pos, rayDir, rayRange);
+
+
+		KdShaderManager::Instance().
+			m_spriteShader.DrawCircle(result.x, result.y, 10, &kRedColor);
+	
+		KdShaderManager::Instance().
+			m_spriteShader.DrawTex(m_Tex,result.x,result.y);
+	}
 }

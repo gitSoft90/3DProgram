@@ -11,6 +11,14 @@ public:
 	void DrawLit()			override;
 	void DrawSprite()		override;
 
+	void SetCamera(std::shared_ptr<KdCamera> camera)
+	{
+		m_wpCamera = camera;
+	}
 private:
 	std::shared_ptr<KdSquarePolygon> m_spPoly = nullptr;
+	std::weak_ptr<KdCamera>			 m_wpCamera;
+	
+	std::shared_ptr<KdTexture> m_Tex;
+	POINT m_mousePos;
 };
