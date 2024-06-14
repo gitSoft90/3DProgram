@@ -15,10 +15,17 @@ public:
 	{
 		m_wpCamera = camera;
 	}
+
+	void SetTerrain(std::shared_ptr<KdGameObject> terrain)
+	{
+		m_wpTerrain = terrain;
+	}
 private:
 	std::shared_ptr<KdSquarePolygon> m_spPoly = nullptr;
 	std::weak_ptr<KdCamera>			 m_wpCamera;
+	std::weak_ptr<KdGameObject>		 m_wpTerrain;
 	
 	std::shared_ptr<KdTexture> m_Tex;
-	POINT m_mousePos;
+	
+	Math::Vector3 m_TargetPos = Math::Vector3::Zero;
 };
