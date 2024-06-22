@@ -1,5 +1,6 @@
 ﻿#include "Character.h"
 #include "../../main.h"
+#include "../Camera/CameraBase.h"
 
 void Character::Init()
 {
@@ -22,12 +23,26 @@ void Character::Update()
 	if (GetAsyncKeyState('A')) { moveVec.x = -1.0f; }
 	if (GetAsyncKeyState('W')) { moveVec.z = 1.0f; }
 	if (GetAsyncKeyState('S')) { moveVec.z = -1.0f; }
+
+	const std::shared_ptr<CameraBase> _spCamera = m_wpCamera.lock();
+	if (_spCamera)
+	{
+		moveVec = moveVec.TransformNormal(moveVec, _spCamera->GetRotationYMatrix());
+	}
 	moveVec.Normalize();
 	moveVec *= moveSpd;
 	nowPos += moveVec;
 
-	// キャラクターのワールド行列を創る処理
-	m_mWorld = Math::Matrix::CreateTranslation(nowPos);
+	// キャラクターの回転行列を創る	// TPSCamera用
+	UpdateRotate(moveVec);
+
+	//// キャラクターのワールド行列を創る処理	// FPSCamera用
+	//m_mWorld = Math::Matrix::CreateTranslation(nowPos);
+
+	// キャラクターのワールド行列を創る処理	// TPSCamera用
+	Math::Matrix _rotation =
+		Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_WorldRot.y));
+	m_mWorld = _rotation * Math::Matrix::CreateTranslation(nowPos);
 }
 
 void Character::DrawLit()
@@ -35,5 +50,40 @@ void Character::DrawLit()
 	if (!m_spPoly) return;
 
 	KdShaderManager::Instance().m_StandardShader.DrawPolygon(*m_spPoly, m_mWorld);
+}
+
+void Character::UpdateRotate(const Math::Vector3& srcMoveVec)
+{
+	// 何も入力が無い場合は処理しない
+	if (srcMoveVec.LengthSquared() == 0.f) return;
+
+	// キャラの正面方向のベクトル
+	Math::Vector3 _nowDir		= GetMatrix().Backward();
+
+	// 移動方向のベクトル
+	Math::Vector3 _targetDir	= srcMoveVec;
+
+	_nowDir.Normalize();
+	_targetDir.Normalize();
+
+	float _nowAng = atan2(_nowDir.x, _nowDir.z);
+	_nowAng = DirectX::XMConvertToDegrees(_nowAng);
+
+	float _targetAng = atan2(_targetDir.x, _targetDir.z);
+	_targetAng = DirectX::XMConvertToDegrees(_targetAng);
+
+	// 角度の差分を求める
+	float _betweenAng = _targetAng - _nowAng;
+	if (_betweenAng > 180)
+	{
+		_betweenAng -= 360;
+	}
+	else if (_betweenAng < -180)
+	{
+		_betweenAng += 360;
+	}
+	//float _rotateAng = std::clamp(_rotateAng, -8.f, 8.f); // ハム太郎が回転しながら移動する
+	float _rotateAng = std::clamp(_betweenAng, -8.f, 8.f);
+	m_WorldRot.y += _rotateAng;
 }
 
