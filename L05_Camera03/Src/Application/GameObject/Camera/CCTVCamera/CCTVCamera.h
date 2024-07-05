@@ -12,4 +12,6 @@ public:
 	void PostUpdate();
 
 private:
+	void UpdateLookAtRotate(const Math::Vector3& targetPos);
+
 };
