@@ -4,13 +4,14 @@ class CameraBase;
 class Character : public KdGameObject
 {
 public:
-	Character()							{}
-	~Character()			override	{}
+	Character()										{}
+	~Character()						override	{}
 
-	void Init()				override;
-	void Update()			override;
-	void PostUpdate()		override;
-	void DrawLit()			override;
+	void Init()							override;
+	void Update()						override;
+	void PostUpdate()					override;
+	void DrawLit()						override;
+	void GenerateDepthMapFromLight()	override;
 
 	void SetCamera(const std::shared_ptr<CameraBase>& camera)
 	{
@@ -37,4 +38,27 @@ private:
 	Math::Vector3								m_worldRot;
 
 	float										m_Gravity		= 0;
+
+// ステートパターン管理系！
+private:
+	class ActionStateBase
+	{
+	public:
+		virtual ~ActionStateBase()				{}
+
+		virtual void Enter(Character& owner)	{}
+		virtual void Update(Character& owner)	{}
+		virtual void Exit(Character& owner)		{}
+	};
+
+	class ActionIdle : public ActionStateBase
+	{
+		ActionIdle() {}
+
+		void Enter(Character& owner)	override; //{}
+		void Update(Character& owner)	override; //{}
+		void Exit(Character& owner)		override; //{}
+	};
+	void ChangeActionState(std::shared_ptr<ActionStateBase> nextState);
+	std::shared_ptr<ActionStateBase> m_nowAction = nullptr;
 };

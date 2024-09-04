@@ -25,34 +25,48 @@ void Character::Update()
 	m_Gravity += 0.01f;
 	m_mWorld._42 -= m_Gravity;
 
-	// キャラクターの移動速度(真似しちゃダメですよ)
-	float			_moveSpd = 0.05f;
-	Math::Vector3	_nowPos	= GetPos();
-
-	Math::Vector3 _moveVec = Math::Vector3::Zero;
-	if (GetAsyncKeyState('D')) { _moveVec.x =  1.0f; }
-	if (GetAsyncKeyState('A')) { _moveVec.x = -1.0f; }
-	if (GetAsyncKeyState('W')) { _moveVec.z =  1.0f; }
-	if (GetAsyncKeyState('S')) { _moveVec.z = -1.0f; }
-
-	const std::shared_ptr<const CameraBase> _spCamera = m_wpCamera.lock();
-	if (_spCamera)
+	// 各種「状態」に応じた更新処理を実行する
+	if (m_nowAction)
 	{
-		_moveVec = _moveVec.TransformNormal(_moveVec, _spCamera->GetRotationYMatrix());
+		m_nowAction->Update(*this);
 	}
-	_moveVec.Normalize();
-	_moveVec *= _moveSpd;
-	_nowPos += _moveVec;
-
-	// キャラクターの回転行列を創る
-	UpdateRotate(_moveVec);
-
-	// キャラクターのワールド行列を創る処理
-	Math::Matrix _rotation = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_worldRot.y));
-	m_mWorld = _rotation * Math::Matrix::CreateTranslation(_nowPos);
 
 	// キャラクターの座標が確定してからコリジョンによる位置補正を行う
 	UpdateCollision();
+
+	//// キャラクターの移動速度(真似しちゃダメですよ)
+	//float			_moveSpd = 0.05f;
+	//Math::Vector3	_nowPos	= GetPos();
+
+	//Math::Vector3 _moveVec = Math::Vector3::Zero;
+	//if (GetAsyncKeyState('D')) { _moveVec.x =  1.0f; }
+	//if (GetAsyncKeyState('A')) { _moveVec.x = -1.0f; }
+	//if (GetAsyncKeyState('W')) { _moveVec.z =  1.0f; }
+	//if (GetAsyncKeyState('S')) { _moveVec.z = -1.0f; }
+
+	//const std::shared_ptr<const CameraBase> _spCamera = m_wpCamera.lock();
+	//if (_spCamera)
+	//{
+	//	_moveVec = _moveVec.TransformNormal(_moveVec, _spCamera->GetRotationYMatrix());
+	//}
+	//_moveVec.Normalize();
+	//_moveVec *= _moveSpd;
+	//_nowPos += _moveVec;
+
+	//// キャラクターの回転行列を創る
+	//UpdateRotate(_moveVec);
+
+	//// キャラクターのワールド行列を創る処理
+	//Math::Matrix _rotation = Math::Matrix::CreateRotationY(DirectX::XMConvertToRadians(m_worldRot.y));
+	//m_mWorld = _rotation * Math::Matrix::CreateTranslation(_nowPos);
+
+	//// キャラクターの座標が確定してからコリジョンによる位置補正を行う
+	//UpdateCollision();
+
+	if (GetAsyncKeyState(VK_SPACE) & 0x8000)
+	{
+		m_Gravity = -0.5f;
+	}
 }
 
 void Character::PostUpdate()
@@ -63,6 +77,13 @@ void Character::PostUpdate()
 }
 
 void Character::DrawLit()
+{
+	if (!m_spModel) return;
+
+	KdShaderManager::Instance().m_StandardShader.DrawModel(*m_spModel, m_mWorld);
+}
+
+void Character::GenerateDepthMapFromLight()
 {
 	if (!m_spModel) return;
 
@@ -184,3 +205,16 @@ void Character::UpdateCollision()
 		}
 	}
 }
+
+// こっからステートパターン関係
+void Character::ChangeActionState(std::shared_ptr<ActionStateBase> nextState)
+{
+	if (m_nowAction)m_nowAction->Exit(*this);
+	m_nowAction = nextState;
+	m_nowAction->Enter(*this);
+}
+
+// ↓待機状態！
+void Character::ActionIdle::Enter(Character& owner){}
+void Character::ActionIdle::Update(Character& owner){}
+void Character::ActionIdle::Exit(Character& owner){}
