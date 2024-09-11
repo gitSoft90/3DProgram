@@ -10,9 +10,9 @@ void Character::Init()
 		m_spModel = std::make_shared<KdModelWork>();
 		m_spModel->SetModelData("Asset/Models/Robot/Robot.gltf");
 
-		// 初期のアニメーションをセットする
+		// 初期のアニメーションをセットする	
 		m_spAnimator = std::make_shared<KdAnimator>();
-		m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Stand"));
+		//m_spAnimator->SetAnimation(m_spModel->GetData()->GetAnimation("Stand"));
 	}
 
 	m_Gravity = 0;
@@ -189,7 +189,10 @@ void Character::ChangeActionState(std::shared_ptr<ActionStateBase> nextState)
 }
 
 // ↓待機状態！
-void Character::ActionIdle::Enter(Character& owner){}
+void Character::ActionIdle::Enter(Character& owner)
+{
+	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("Stand"));
+}
 void Character::ActionIdle::Update(Character& owner)
 {
 	// ジャンプ検知
@@ -229,7 +232,10 @@ void Character::ActionJump::Update(Character& owner)
 void Character::ActionJump::Exit(Character& owner) {}
 
 // ↓移動状態！
-void Character::ActionWalk::Enter(Character& owner) {}
+void Character::ActionWalk::Enter(Character& owner) 
+{
+	owner.m_spAnimator->SetAnimation(owner.m_spModel->GetData()->GetAnimation("Walk"));
+}
 void Character::ActionWalk::Update(Character& owner) 
 {
 	// キャラクターの移動速度(真似しちゃダメですよ)
@@ -241,6 +247,13 @@ void Character::ActionWalk::Update(Character& owner)
 	if (GetAsyncKeyState('A')) { _moveVec.x = -1.0f; }
 	if (GetAsyncKeyState('W')) { _moveVec.z =  1.0f; }
 	if (GetAsyncKeyState('S')) { _moveVec.z = -1.0f; }
+
+	// 何も入力がなかったら「待機状態」へ戻る
+	if (_moveVec.LengthSquared() == 0)
+	{
+		owner.ChangeActionState(std::make_shared<ActionIdle>());
+		return;
+	}
 
 	const std::shared_ptr<const CameraBase> _spCamera = owner.m_wpCamera.lock();
 	if (_spCamera)
