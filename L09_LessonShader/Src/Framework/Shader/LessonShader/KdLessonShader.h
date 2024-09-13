@@ -3,6 +3,12 @@
 class KdLessonShader
 {
 public:
+	// 定数バッファ(メッシュ単位更新)
+	struct cbMesh
+	{
+		Math::Matrix mW;
+	};
+public:
 
     //================================================
     // 初期化・解放
@@ -41,5 +47,6 @@ private:
 
     ID3D11InputLayout*  m_inputLayout   = nullptr;  // 頂点入力レイアウト
 
-    
+    // 定数バッファ
+	KdConstantBuffer<cbMesh> m_cb1_Mesh;			// メッシュ毎に更新
 };
