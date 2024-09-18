@@ -304,12 +304,11 @@ void Application::Execute()
 			PreDraw();
 
 			Draw();
+			DrawLesson();
 
 			PostDraw();
 
 			DrawSprite();
-
-			DrawLesson();
 		}
 		KdPostDraw();
 
