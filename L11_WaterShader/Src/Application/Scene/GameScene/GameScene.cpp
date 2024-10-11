@@ -2,7 +2,7 @@
 #include"../SceneManager.h"
 
 #include "../../GameObject/Terrain/Terrain.h"
-#include "../../GameObject/Water/Water.h"
+#include "../../GameObject/Terrain/Water/Water.h"
 #include "../../GameObject/Character/Character.h"
 
 #include "../../GameObject/Camera/FPSCamera/FPSCamera.h"
@@ -25,9 +25,6 @@ void GameScene::Init()
 	_terrain->Init();
 	AddObject(_terrain);
 
-	//===================================================================
-	// ウォーター初期化
-	//===================================================================
 	std::shared_ptr<Water> _water = std::make_shared<Water>();
 	_water->Init();
 	AddObject(_water);

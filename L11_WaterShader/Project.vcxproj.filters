@@ -91,8 +91,8 @@
     <Filter Include="Src\Framework\Shader\LessonShader">
       <UniqueIdentifier>{7a395188-0ccd-434e-bdf8-35d818c192ca}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Src\Application\GameObject\Water">
-      <UniqueIdentifier>{5aa61743-8a35-4b07-a6ae-c38b23385442}</UniqueIdentifier>
+    <Filter Include="Src\Application\GameObject\Terrain\Water">
+      <UniqueIdentifier>{0be0fa65-969e-44bf-bf5b-33b1fbf1acc7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -282,8 +282,8 @@
     <ClInclude Include="Src\Framework\Shader\LessonShader\KdLessonShader.h">
       <Filter>Src\Framework\Shader\LessonShader</Filter>
     </ClInclude>
-    <ClInclude Include="Src\Application\GameObject\Water\Water.h">
-      <Filter>Src\Application\GameObject\Water</Filter>
+    <ClInclude Include="Src\Application\GameObject\Terrain\Water\Water.h">
+      <Filter>Src\Application\GameObject\Terrain\Water</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -446,8 +446,8 @@
     <ClCompile Include="Src\Framework\Shader\LessonShader\KdLessonShader.cpp">
       <Filter>Src\Framework\Shader\LessonShader</Filter>
     </ClCompile>
-    <ClCompile Include="Src\Application\GameObject\Water\Water.cpp">
-      <Filter>Src\Application\GameObject\Water</Filter>
+    <ClCompile Include="Src\Application\GameObject\Terrain\Water\Water.cpp">
+      <Filter>Src\Application\GameObject\Terrain\Water</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
