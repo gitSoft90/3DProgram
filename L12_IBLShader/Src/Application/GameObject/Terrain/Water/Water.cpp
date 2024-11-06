@@ -5,7 +5,7 @@ void Water::Init()
 	if (!m_spModel)
 	{
 		m_spModel = std::make_shared<KdModelWork>();
-		m_spModel->SetModelData("Asset/LessonData/Stage/Water/Water.gltf");
+		//m_spModel->SetModelData("Asset/LessonData/Stage/Water/Water.gltf");
 		m_spModel->SetModelData("Asset/LessonData/Stage/Water/Water_alpha/Water.gltf");
 
 		SetPos({ 0,0.5f,0 });
