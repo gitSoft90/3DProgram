@@ -19,6 +19,8 @@ void Character::Init()
 
 	// 初期状態を「待機状態」へ設定
 	ChangeActionState(std::make_shared<ActionIdle>());
+
+	//m_Debug = std::make_shared<KdDebugWireFrame>();
 }
 
 void Character::Update()
